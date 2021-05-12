@@ -6,7 +6,6 @@
 
 import jwt = require("jsonwebtoken");
 import fs = require("fs");
-import { VerifyErrors } from './index';
 
 let token: string;
 let cert: Buffer;
@@ -69,13 +68,9 @@ jwt.verify(token, "shhhhh", (err, decoded) => {
     console.log(result.foo); // bar
 });
 
-type Token = {
-    foo: string
+interface Token {
+    foo: string;
 }
-
-jwt.verify<Token>(token, "shhhhh", (err: VerifyErrors | null, decoded: Token | undefined) => {
-    console.log(decoded!.foo); // bar
-});
 
 // use external time for verifying
 jwt.verify(token, 'shhhhh', { clockTimestamp: 1 }, (err, decoded) => {
@@ -165,19 +160,17 @@ if (decoded !== null && typeof decoded === "object") {
 
 decoded = jwt.decode(token, { json: false });
 
-const decodedToken: Token | string | null = jwt.decode<Token>(token, { json: false });
-const decodedToken2: Token | null = jwt.decode<Token>(token, { json: true });
-
+// $ExpectType string | Record<string, any> | null
 decoded = jwt.decode(token, { complete: false, json: false });
 
 decoded = jwt.decode(token, { json: true });
 if (decoded) {
-    // $ExpectType { [key: string]: any; }
+    // $ExpectType Record<string, any>
     decoded;
 }
 
 decoded = jwt.decode(token, { complete: true });
 if (decoded) {
-  // $ExpectType { [key: string]: any; }
+  // $ExpectType Record<string, any>
   decoded;
 }

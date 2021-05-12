@@ -98,9 +98,9 @@ export type VerifyErrors =
     | JsonWebTokenError
     | NotBeforeError
     | TokenExpiredError;
-export type VerifyCallback<Decoded extends TokenPayloadType> = (
+export type VerifyCallback = (
     err: VerifyErrors | null,
-    decoded: Decoded | undefined,
+    decoded: Record<string, any> | string | undefined,
 ) => void;
 
 export type SignCallback = (
@@ -177,9 +177,7 @@ export function sign(
  * [options] - Options for the verification
  * returns - The decoded token.
  */
-export function verify<Decoded extends TokenPayloadType>(token: string, secretOrPublicKey: Secret, options?: VerifyOptions): Decoded;
-
-export type TokenPayloadType = Record<string, any> | string
+export function verify(token: string, secretOrPublicKey: Secret, options?: VerifyOptions): Record<string, any> | string;
 
 /**
  * Asynchronously verify given token using a secret or a public key to get a decoded token
@@ -190,16 +188,16 @@ export type TokenPayloadType = Record<string, any> | string
  * [options] - Options for the verification
  * callback - Callback to get the decoded token on
  */
-export function verify<Decoded extends TokenPayloadType>(
+export function verify(
     token: string,
     secretOrPublicKey: Secret | GetPublicKeyOrSecret,
-    callback?: VerifyCallback<Decoded>,
+    callback?: VerifyCallback,
 ): void;
-export function verify<Decoded extends TokenPayloadType>(
+export function verify(
     token: string,
     secretOrPublicKey: Secret | GetPublicKeyOrSecret,
     options?: VerifyOptions,
-    callback?: VerifyCallback<Decoded>,
+    callback?: VerifyCallback,
 ): void;
 
 /**
@@ -208,5 +206,5 @@ export function verify<Decoded extends TokenPayloadType>(
  * [options] - Options for decoding
  * returns - The decoded Token
  */
-export function decode<Decoded extends Record<string, any>>(token: string, options: DecodeOptions & { json: true } | DecodeOptions & { complete: true }): null | Decoded;
-export function decode<Decoded extends TokenPayloadType>(token: string, options?: DecodeOptions): null | Decoded;
+export function decode(token: string, options: DecodeOptions & { json: true } | DecodeOptions & { complete: true }): null | Record<string, any>;
+export function decode(token: string, options?: DecodeOptions): null | Record<string, any> | string;
