@@ -68,10 +68,6 @@ jwt.verify(token, "shhhhh", (err, decoded) => {
     console.log(result.foo); // bar
 });
 
-interface Token {
-    foo: string;
-}
-
 // use external time for verifying
 jwt.verify(token, 'shhhhh', { clockTimestamp: 1 }, (err, decoded) => {
     const result = decoded as TestObject;

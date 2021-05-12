@@ -100,7 +100,7 @@ export type VerifyErrors =
     | TokenExpiredError;
 export type VerifyCallback = (
     err: VerifyErrors | null,
-    decoded: Record<string, any> | string | undefined,
+    decoded: Record<string, any> | undefined,
 ) => void;
 
 export type SignCallback = (
