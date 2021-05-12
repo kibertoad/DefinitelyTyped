@@ -62,7 +62,7 @@ export interface SignOptions {
     jwtid?: string;
     mutatePayload?: boolean;
     noTimestamp?: boolean;
-    header?: object;
+    header?: Record<string, any>;
     encoding?: string;
 }
 
@@ -98,9 +98,9 @@ export type VerifyErrors =
     | JsonWebTokenError
     | NotBeforeError
     | TokenExpiredError;
-export type VerifyCallback = (
+export type VerifyCallback<Decoded extends TokenPayloadType> = (
     err: VerifyErrors | null,
-    decoded: object | undefined,
+    decoded: Decoded | undefined,
 ) => void;
 
 export type SignCallback = (
@@ -146,7 +146,7 @@ export type Secret =
  * returns - The JSON Web Token string
  */
 export function sign(
-    payload: string | Buffer | object,
+    payload: string | Buffer | Record<string, any>,
     secretOrPrivateKey: Secret,
     options?: SignOptions,
 ): string;
@@ -159,12 +159,12 @@ export function sign(
  * callback - Callback to get the encoded token on
  */
 export function sign(
-    payload: string | Buffer | object,
+    payload: string | Buffer | Record<string, any>,
     secretOrPrivateKey: Secret,
     callback: SignCallback,
 ): void;
 export function sign(
-    payload: string | Buffer | object,
+    payload: string | Buffer | Record<string, any>,
     secretOrPrivateKey: Secret,
     options: SignOptions,
     callback: SignCallback,
@@ -177,7 +177,9 @@ export function sign(
  * [options] - Options for the verification
  * returns - The decoded token.
  */
-export function verify(token: string, secretOrPublicKey: Secret, options?: VerifyOptions): object | string;
+export function verify<Decoded extends TokenPayloadType>(token: string, secretOrPublicKey: Secret, options?: VerifyOptions): Decoded;
+
+export type TokenPayloadType = Record<string, any> | string
 
 /**
  * Asynchronously verify given token using a secret or a public key to get a decoded token
@@ -188,16 +190,16 @@ export function verify(token: string, secretOrPublicKey: Secret, options?: Verif
  * [options] - Options for the verification
  * callback - Callback to get the decoded token on
  */
-export function verify(
+export function verify<Decoded extends TokenPayloadType>(
     token: string,
     secretOrPublicKey: Secret | GetPublicKeyOrSecret,
-    callback?: VerifyCallback,
+    callback?: VerifyCallback<Decoded>,
 ): void;
-export function verify(
+export function verify<Decoded extends TokenPayloadType>(
     token: string,
     secretOrPublicKey: Secret | GetPublicKeyOrSecret,
     options?: VerifyOptions,
-    callback?: VerifyCallback,
+    callback?: VerifyCallback<Decoded>,
 ): void;
 
 /**
@@ -206,5 +208,5 @@ export function verify(
  * [options] - Options for decoding
  * returns - The decoded Token
  */
-export function decode(token: string, options: DecodeOptions & { json: true } | DecodeOptions & { complete: true }): null | { [key: string]: any };
-export function decode(token: string, options?: DecodeOptions): null | { [key: string]: any } | string;
+export function decode<Decoded extends Record<string, any>>(token: string, options: DecodeOptions & { json: true } | DecodeOptions & { complete: true }): null | Decoded;
+export function decode<Decoded extends TokenPayloadType>(token: string, options?: DecodeOptions): null | Decoded;

@@ -6,6 +6,7 @@
 
 import jwt = require("jsonwebtoken");
 import fs = require("fs");
+import { VerifyErrors } from './index';
 
 let token: string;
 let cert: Buffer;
@@ -66,6 +67,14 @@ jwt.verify(token, "shhhhh", (err, decoded) => {
     const result = decoded as TestObject;
 
     console.log(result.foo); // bar
+});
+
+type Token = {
+    foo: string
+}
+
+jwt.verify<Token>(token, "shhhhh", (err: VerifyErrors | null, decoded: Token | undefined) => {
+    console.log(decoded!.foo); // bar
 });
 
 // use external time for verifying
@@ -155,6 +164,9 @@ if (decoded !== null && typeof decoded === "object") {
 }
 
 decoded = jwt.decode(token, { json: false });
+
+const decodedToken: Token | string | null = jwt.decode<Token>(token, { json: false });
+const decodedToken2: Token | null = jwt.decode<Token>(token, { json: true });
 
 decoded = jwt.decode(token, { complete: false, json: false });
 
